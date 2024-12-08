@@ -25,7 +25,10 @@ import Link from "next/link";
 type FormType = "sign-in" | "sign-up";
 const authFormSchema = (formType: FormType) => {
   return z.object({
-    fullName: formType === "sign-in" ? z.null() : z.string().min(2).max(30),
+    fullName:
+      formType === "sign-in"
+        ? z.string().optional()
+        : z.string().min(2).max(30),
     email: z.string().email(),
   });
 };
