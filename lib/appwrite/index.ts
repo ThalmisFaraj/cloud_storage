@@ -4,8 +4,11 @@ import { Account, Avatars, Client, Databases, Storage } from "node-appwrite";
 import { appwriteConfig } from "./config";
 import { cookies } from "next/headers";
 
-//creating new client conenctions for each request. Sharing client across requests may create security issues.
-//so always create a new one for a request
+// Notice that createAdminClient and createSessionClient returns a new instance of the
+//Appwrite Client. When using Appwrite in server-integrations, it's important to
+//never share a Client instance between two requests.
+//Doing so could create security vulnerabilities.
+
 export const createSessionClient = async () => {
   const client = new Client()
     .setEndpoint(appwriteConfig.endpointUrl)
@@ -14,6 +17,8 @@ export const createSessionClient = async () => {
   const session = (await cookies()).get("appwrite-session");
 
   if (!session || !session.value) throw new Error("No Session ");
+
+  client.setSession(session.value);
 
   return {
     get account() {

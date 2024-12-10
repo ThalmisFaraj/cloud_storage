@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { createAccount } from "@/lib/actions/user.actions";
 
 // const formSchema = z.object({
 //   fullName: z.string().min(2).max(50),
@@ -36,6 +37,7 @@ const authFormSchema = (formType: FormType) => {
 function AuthForm({ type }: { type: FormType }) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [accountId, setAccountId] = useState(null);
 
   const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -50,8 +52,19 @@ function AuthForm({ type }: { type: FormType }) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     setIsLoading(true);
+    setErrorMessage("");
+    try {
+      const user = await createAccount({
+        fullName: values.fullName || "",
+        email: values.email,
+      });
 
-    setTimeout(() => setIsLoading(false), 1000);
+      setAccountId(user.accountId);
+    } catch (err) {
+      setErrorMessage("Failed to create an account. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
 
     console.log(values);
   }
