@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { createAccount } from "@/lib/actions/user.actions";
+import OTPModal from "./OTPModal";
 
 // const formSchema = z.object({
 //   fullName: z.string().min(2).max(50),
@@ -75,7 +76,7 @@ function AuthForm({ type }: { type: FormType }) {
           <h1 className="form-title">
             {type === "sign-in" ? "Sign In" : "Sing Up"}
           </h1>
-          {type === "sign-in" && (
+          {type === "sign-up" && (
             <FormField
               control={form.control}
               name="fullName"
@@ -145,7 +146,7 @@ function AuthForm({ type }: { type: FormType }) {
               {" "}
               {type === "sign-in"
                 ? "Dont have an account?"
-                : "ALreqady have an account?"}
+                : "Already have an account?"}
             </p>
             <Link
               href={type === "sign-in" ? "/sign-up" : "/sign-in"}
@@ -156,7 +157,7 @@ function AuthForm({ type }: { type: FormType }) {
           </div>
         </form>
       </Form>
-      {/* OTP verification */}
+      {true && <OTPModal email={form.getValues("email")} />}
     </>
   );
 }
