@@ -69,20 +69,28 @@ export const createAccount = async ({
 };
 
 export const verifySecret = async ({
-  accountid,
+  accountId,
   password,
 }: {
-  accountid: string;
+  accountId: string;
   password: string;
 }) => {
   try {
     const { account } = await createAdminClient();
 
-    // const session =await account.createSession(accountid, password)
+    const session = await account
+      .createSession(
+        accountId,
+        password
+      )(await cookies())
+      .set("appwrite-session", session.secret, {
+        path: "/",
+        httpOnly: true,
+        sameSite: true,
+        secure: true,
+      });
 
-    // (await cookies()).set('appwrite-session', session.secret, {path:'/', httpOnly:true, sameSite:true, secure:true})
-
-    // return parseStringify({sessionId:session.$id})
+    return parseStringify({ sessionId: session.$id });
   } catch (err) {
     handleError(err, "Failed to verify OTP");
   }

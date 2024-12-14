@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { verifySecret } from "@/lib/actions/user.actions";
+import { useRouter } from "next/navigation";
 
 const OTPModal = ({
   email,
@@ -33,7 +35,12 @@ const OTPModal = ({
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    const router = useRouter();
     try {
+      const sessionId = await verifySecret({ accountId, password });
+      if (sessionId) {
+        router.push("/");
+      }
     } catch (err) {
       console.log("Failed to verify OTP", err);
     }
