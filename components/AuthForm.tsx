@@ -60,7 +60,8 @@ function AuthForm({ type }: { type: FormType }) {
         email: values.email,
       });
 
-      setAccountId(user.accountId);
+      setAccountId(user.accountid);
+      console.log("user", user);
     } catch (err) {
       setErrorMessage("Failed to create an account. Please try again.");
     } finally {
@@ -69,6 +70,7 @@ function AuthForm({ type }: { type: FormType }) {
 
     console.log(values);
   }
+
   return (
     <>
       <Form {...form}>
@@ -157,7 +159,9 @@ function AuthForm({ type }: { type: FormType }) {
           </div>
         </form>
       </Form>
-      {true && <OTPModal email={form.getValues("email")} />}
+      {accountId && (
+        <OTPModal email={form.getValues("email")} accountId={accountId} />
+      )}
     </>
   );
 }

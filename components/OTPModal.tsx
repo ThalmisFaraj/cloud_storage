@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import {
   InputOTP,
@@ -18,7 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { verifySecret } from "@/lib/actions/user.actions";
+import { verifySecret, sendEmailOTP } from "@/lib/actions/user.actions";
 import { useRouter } from "next/navigation";
 
 const OTPModal = ({
@@ -31,13 +32,15 @@ const OTPModal = ({
   const [isOpen, setIsOpen] = useState(true);
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    const router = useRouter();
+
     try {
       const sessionId = await verifySecret({ accountId, password });
+      console.log("sessionId", sessionId);
       if (sessionId) {
         router.push("/");
       }
@@ -47,7 +50,9 @@ const OTPModal = ({
     setIsLoading(false);
   };
 
-  const handleResendOTP = async () => {};
+  const handleResendOTP = async ({ email }) => {
+    await sendEmailOTP({ email });
+  };
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
@@ -82,7 +87,11 @@ const OTPModal = ({
 
         <AlertDialogFooter>
           <div className="w-full flex flex-col gap-4">
-            <AlertDialogAction className="shad-submit-btn h-12" type="submit">
+            <AlertDialogAction
+              className="shad-submit-btn h-12"
+              type="submit"
+              onClick={handleSubmit}
+            >
               Submit{" "}
               {isLoading && (
                 <Image
@@ -100,7 +109,7 @@ const OTPModal = ({
                 type="button"
                 variant="link"
                 className="pl-1 text-brand"
-                onClick={handleResendOTP}
+                onClick={() => handleResendOTP({ email })}
               >
                 {" "}
                 Click to resend
